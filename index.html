@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoKop SK · PSI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Library Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
+
+    <!-- Library PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js">
+    </script>
+
+    <style>
+        /* ============================================================
+           RESET & ROOT
+           ============================================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #090a0d;
+            --panel: #111216;
+            --panel2: #15161b;
+            --line: #292b32;
+            --text: #f7f7f8;
+            --muted: #9b9da5;
+            --red: #ed1c24;
+            --red2: #ff6d73;
+            --green: #35d07f;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 12% 20%, rgba(237, 28, 36, .08), transparent 32%),
+                radial-gradient(circle at 90% 90%, rgba(30, 70, 95, .10), transparent 30%),
+                var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================================
+           APP WRAPPER
+           ============================================================ */
+        .app {
+            width: min(1400px, 100%);
+            margin: 0 auto;
+            padding: 20px 32px 0;
+        }
+
+        /* ============================================================
+           TOPBAR
+           ============================================================ */
+        .topbar {
+            height: 62px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #202127;
+            margin: 0 -32px 48px;
+            padding: 0 32px;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo-divider {
+            height: 30px;
+            width: 1px;
+            background: #303139;
+        }
+
+        /* ============================================================
+           HERO — judul & subtitle saja
+           ============================================================ */
+        .hero {
+            margin-bottom: 32px;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px 32px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 4.8vw, 64px);
+            line-height: 1.0;
+            letter-spacing: -2.5px;
+            font-weight: 900;
+        }
+
+        .hero h1 span {
+            color: #ff858a;
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #a6a8b0;
+            margin-top: 6px;
+            max-width: 580px;
+        }
+
+        .hero-extra {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #b0b2b9;
+            border: 1px solid #2c2e36;
+            border-radius: 99px;
+            padding: 6px 16px 6px 12px;
+            background: rgba(18, 19, 23, .60);
+        }
+
+        .hero-badge i {
+            color: #ff6d73;
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #35d07f;
+            display: inline-block;
+            animation: pulse-dot 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: .35;
+                transform: scale(.7);
+            }
+        }
+
+        /* ============================================================
+           MAIN CARD — full width, tabs di dalamnya
+           ============================================================ */
+        .main-card {
+            background: linear-gradient(145deg, rgba(25, 26, 31, .98), rgba(12, 13, 16, .98));
+            border: 1px solid #303139;
+            border-radius: 32px;
+            padding: 32px 30px 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .32);
+            margin-bottom: 40px;
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .card-head .eyebrow {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            color: #ff777c;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 6px;
+        }
+
+        .card-head .eyebrow::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 14px rgba(237, 28, 36, .65);
+        }
+
+        .card-head h2 {
+            font-size: 28px;
+            letter-spacing: -1.3px;
+            font-weight: 800;
+        }
+
+        .card-head p {
+            font-size: 12px;
+            color: #858892;
+            margin-top: 6px;
+        }
+
+        .time-pill {
+            border: 1px solid #363840;
+            background: #1a1b20;
+            color: #b0b2b9;
+            border-radius: 99px;
+            padding: 10px 16px;
+            font-size: 11px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================================
+           TABS
+           ============================================================ */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: #0d0e11;
+            border: 1px solid #25262c;
+            padding: 5px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: transparent;
+            color: #8f929b;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .tab i {
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: #1d1e23;
+            color: #fff;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .2);
+        }
+
+        .tab:hover:not(.active) {
+            color: #d0d2d8;
+            background: rgba(255, 255, 255, .04);
+        }
+
+        /* ============================================================
+           FORM CARD (di dalam tab)
+           ============================================================ */
+        .form-card {
+            border: 1px solid #2c2e35;
+            border-radius: 24px;
+            padding: 24px 24px 22px;
+            background: rgba(18, 19, 23, .76);
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .num {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(237, 28, 36, .4);
+            background: rgba(237, 28, 36, .08);
+            color: #ff7076;
+            font-size: 12px;
+            font-weight: 800;
+            flex: none;
+        }
+
+        .section-title strong {
+            font-size: 14px;
+            display: block;
+        }
+
+        .section-title small {
+            display: block;
+            color: #858892;
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            color: #d5d6da;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+
+        .req {
+            color: #ff656b;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            height: 44px;
+            background: #0e0f12;
+            color: #dfe0e4;
+            border: 1px solid #34363d;
+            border-radius: 14px;
+            padding: 0 13px;
+            outline: none;
+            transition: .2s;
+            appearance: auto;
+        }
+
+        .field input::placeholder {
+            color: #5f626b;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: #e95056;
+            box-shadow: 0 0 0 3px rgba(237, 28, 36, .10);
+        }
+
+        .field select option {
+            background: #111216;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            min-height: 44px;
+            padding: 0 22px;
+            border-radius: 14px;
+            background: var(--red);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: .18s;
+            border: 1px solid transparent;
+            font-size: 13px;
+        }
+
+        .btn:hover:not(:disabled) {
+            filter: brightness(1.10);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
+        .btn-outline {
+            background: #15161a;
+            border-color: #3a3c43;
+            color: #d7d8dc;
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: #1e1f25;
+            border-color: #51545e;
+        }
+
+        .btn-sm {
+            min-height: 38px;
+            padding: 0 16px;
+            font-size: 12px;
+            border-radius: 12px;
+        }
+
+        /* ============================================================
+           RESULT BOX
+           ============================================================ */
+        .result-box {
+            border: 1px solid #304137;
+            background: rgba(22, 30, 25, .72);
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-top: 18px;
+        }
+
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pre {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            background: #0d0e11;
+            border: 1px solid #292c31;
+            padding: 12px 16px;
+            border-radius: 13px;
+            color: #f4f4f5;
+            font-size: 13px;
+            word-break: break-all;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .success {
+            margin-top: 10px;
+            color: #7fe5aa;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================================
+           SEARCH LAYOUT
+           ============================================================ */
+        .search-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.65fr) minmax(260px, .75fr);
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 18px;
+        }
+
+        .search-filter-card {
+            border: 1px solid #30323a;
+            background: #111216;
+            border-radius: 20px;
+            padding: 18px 18px 16px;
+        }
+
+        .search-filter-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .search-filter-title i {
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            color: #ff6c72;
+            background: rgba(237, 28, 36, .10);
+            border: 1px solid rgba(237, 28, 36, .25);
+        }
+
+        .search-filter-title strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .search-filter-title small {
+            display: block;
+            color: #737680;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .search-fields {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(150px, .7fr) minmax(190px, .9fr);
+            gap: 12px;
+        }
+
+        .search-action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .search-result-info {
+            margin-top: 14px;
+            color: #777a84;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-result-info strong {
+            color: #dfe0e4;
+        }
+
+        /* ============================================================
+           REPORT CARD
+           ============================================================ */
+        .report-card {
+            border: 1px solid rgba(237, 28, 36, .28);
+            background:
+                linear-gradient(145deg, rgba(237, 28, 36, .10), rgba(18, 19, 23, .80));
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .report-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            color: #ff6d73;
+            background: rgba(237, 28, 36, .12);
+            border: 1px solid rgba(237, 28, 36, .28);
+            margin-bottom: 12px;
+        }
+
+        .report-card strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .report-card p {
+            color: #999ba4;
+            font-size: 10.5px;
+            line-height: 1.65;
+        }
+
+        .report-person {
+            margin-top: 10px;
+            color: #fff !important;
+            font-size: 11px !important;
+            line-height: 1.6 !important;
+        }
+
+        .report-person b {
+            color: #ff858a;
+        }
+
+        .report-wa {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 36px;
+            padding: 0 14px;
+            border-radius: 11px;
+            color: #fff;
+            background: #168b4c;
+            border: 1px solid rgba(53, 208, 127, .35);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 800;
+            transition: .2s;
+            align-self: flex-start;
+        }
+
+        .report-wa:hover {
+            background: #1ca95d;
+            transform: translateY(-1px);
+        }
+
+        /* ============================================================
+           TABLE
+           ============================================================ */
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid #292b32;
+            border-radius: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+            font-size: 12px;
+        }
+
+        th {
+            background: #15161a;
+            color: #a9abb3;
+            text-align: left;
+            padding: 13px 14px;
+            border-bottom: 1px solid #2b2d33;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #22242a;
+            color: #d3d4d8;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .empty {
+            text-align: center !important;
+            color: #70737d !important;
+            padding: 32px !important;
+            font-style: italic;
+        }
+
+        /* ============================================================
+           DOWNLOAD
+           ============================================================ */
+        .download-intro {
+            border: 1px solid #303139;
+            background:
+                linear-gradient(145deg, rgba(237, 28, 36, .08), rgba(18, 19, 23, .7));
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+
+        .download-intro-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .download-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(237, 28, 36, .10);
+            border: 1px solid rgba(237, 28, 36, .30);
+            color: #ff6c72;
+            flex: none;
+        }
+
+        .download-intro strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .download-intro span {
+            display: block;
+            margin-top: 4px;
+            color: #858892;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .download-filter {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 14px;
+            align-items: end;
+            margin-bottom: 18px;
+        }
+
+        .download-count {
+            border: 1px solid #30323a;
+            background: #15161a;
+            min-height: 44px;
+            padding: 0 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aeb0b8;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .download-count strong {
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .download-btn {
+            min-height: 82px;
+            border-radius: 18px;
+            border: 1px solid #35373e;
+            background: #15161a;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 18px;
+            text-align: left;
+            transition: .2s;
+            width: 100%;
+        }
+
+        .download-btn:hover {
+            border-color: #51545e;
+            background: #1a1b20;
+            transform: translateY(-2px);
+        }
+
+        .download-btn.excel:hover {
+            border-color: #3a8f61;
+        }
+
+        .download-btn.pdf:hover {
+            border-color: #b44b50;
+        }
+
+        .download-btn-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            flex: none;
+            font-size: 20px;
+        }
+
+        .download-btn.excel .download-btn-icon {
+            color: #52d78e;
+            background: rgba(53, 208, 127, .10);
+            border: 1px solid rgba(53, 208, 127, .25);
+        }
+
+        .download-btn.pdf .download-btn-icon {
+            color: #ff6d73;
+            background: rgba(237, 28, 36, .10);
+            border: 1px solid rgba(237, 28, 36, .25);
+        }
+
+        .download-btn-text strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .download-btn-text small {
+            color: #858892;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .download-preview {
+            margin-top: 18px;
+            border: 1px solid #292b32;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .download-preview-head {
+            padding: 13px 16px;
+            background: #15161a;
+            border-bottom: 1px solid #292b32;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .download-preview-head strong {
+            font-size: 11px;
+        }
+
+        .download-preview-head span {
+            color: #737680;
+            font-size: 10px;
+        }
+
+        .download-preview-body {
+            padding: 14px 16px;
+            background: #0e0f12;
+            color: #898c95;
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .download-note {
+            margin-top: 16px;
+            color: #737680;
+            font-size: 10px;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .download-note i {
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           TIPS — bagian bawah
+           ============================================================ */
+        .tips-section {
+            border-top: 1px solid #202127;
+            padding: 36px 0 28px;
+            margin: 0 -32px;
+            background: radial-gradient(circle at 30% 70%, rgba(237, 28, 36, .04), transparent 50%);
+        }
+
+        .tips-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 24px 32px;
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .tip-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #36383f;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: #aeb0b7;
+            flex: none;
+            background: #16171c;
+            font-size: 14px;
+        }
+
+        .tip-item strong {
+            font-size: 13px;
+            display: block;
+            margin-bottom: 4px;
+            color: #e8e9ec;
+        }
+
+        .tip-item small {
+            color: #858892;
+            font-size: 11px;
+            line-height: 1.5;
+            display: block;
+        }
+
+        .tips-footer {
+            margin-top: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-top: 18px;
+            border-top: 1px solid #202127;
+            color: #6f727c;
+            font-size: 11px;
+        }
+
+        .tips-footer i {
+            color: #ff6d73;
+        }
+
+        /* ============================================================
+           LOGIN (dalam card)
+           ============================================================ */
+        #loginSection .form-card {
+            max-width: 640px;
+        }
+
+        /* ============================================================
+           LOADING OVERLAY
+           ============================================================ */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 6, 8, .78);
+            backdrop-filter: blur(7px);
+            display: grid;
+            place-items: center;
+            z-index: 5000;
+        }
+
+        .loader-card {
+            width: min(360px, calc(100% - 32px));
+            background: #141519;
+            border: 1px solid #34363d;
+            border-radius: 24px;
+            padding: 32px 28px 28px;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .5);
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 3px solid #363840;
+            border-top-color: #ff555c;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 18px;
+        }
+
+        .loader-card strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .loader-card span {
+            color: #898c95;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .progress {
+            height: 4px;
+            background: #282a30;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 18px;
+        }
+
+        .progress::after {
+            content: "";
+            display: block;
+            height: 100%;
+            width: 45%;
+            background: #ed1c24;
+            border-radius: 10px;
+            animation: progress 1.1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes progress {
+            0% {
+                transform: translateX(-110%);
+            }
+            100% {
+                transform: translateX(260%);
+            }
+        }
+
+        .is-loading {
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            transform: translate(-50%, 20px);
+            background: #1c1e23;
+            border: 1px solid #3a3c43;
+            color: #fff;
+            padding: 13px 22px;
+            border-radius: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: .28s ease;
+            z-index: 3000;
+            font-size: 12px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+            max-width: calc(100% - 40px);
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1100px) {
+            .search-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .search-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .search-fields .search-keyword {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .app {
+                padding: 16px 18px 0;
+            }
+
+            .topbar {
+                margin: 0 -18px 32px;
+                padding: 0 18px;
+            }
+
+            .tips-section {
+                margin: 0 -18px;
+            }
+
+            .tips-inner {
+                padding: 0 18px;
+            }
+
+            .hero-top {
+                flex-direction: column;
+            }
+
+            .main-card {
+                padding: 20px 16px 18px;
+                border-radius: 24px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .download-filter {
+                grid-template-columns: 1fr;
+            }
+
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .download-count {
+                justify-content: center;
+            }
+
+            .search-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .search-fields .search-keyword {
+                grid-column: auto;
+            }
+
+            .search-action-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .search-action-row .btn {
+                width: 100%;
+            }
+
+            .card-head {
+                flex-direction: column;
+            }
+
+            .time-pill {
+                align-self: flex-start;
+            }
+
+            .tabs .tab {
+                font-size: 11px;
+                padding: 10px 10px;
+            }
+
+            .tabs .tab i {
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: clamp(30px, 7vw, 42px);
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tabs .tab {
+                flex: 1 0 calc(50% - 4px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- ============================================================
+        TOPBAR
+        ============================================================ -->
+        <header class="topbar">
+            <div class="logo-wrap">
+                <img class="logo" src="https://ik.imagekit.io/uwumedia/psi-dark-web.png?updatedAt=1759867445638&tr=f-webp:c-at_max,h-300" alt="PSI">
+                <span class="logo-divider"></span>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        HERO — judul & subtitle
+        ============================================================ -->
+        <section class="hero">
+            <div class="hero-top">
+                <div>
+                    <h1>
+                        AutoKop SK<br>
+                        <span>Partai Solidaritas Indonesia</span>
+                    </h1>
+                    <p class="hero-sub">
+                        Buat, simpan, cari, dan unduh nomor SK secara otomatis.
+                    </p>
+                    <div class="hero-extra">
+                        <span class="hero-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="dot"></span>
+                            Sistem siap
+                        </span>
+                        <span class="hero-badge">
+                            <i class="fas fa-database"></i>
+                            Google Sheets
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        MAIN CARD — login + tabs
+        ============================================================ -->
+        <section class="main-card">
+
+            <!-- ==========================================================
+            LOGIN
+            ========================================================== -->
+            <div id="loginSection">
+                <div class="card-head">
+                    <div>
+                        <div class="eyebrow">Login aplikasi</div>
+                        <h2>Masuk ke AutoKop SK</h2>
+                        <p>Gunakan akun yang ada di sheet <b>users</b>.</p>
+                    </div>
+                    <div class="time-pill">
+                        <i class="far fa-clock"></i>
+                        Aman &amp; cepat
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="section-title">
+                        <div class="num">01</div>
+                        <div>
+                            <strong>Autentikasi</strong>
+                            <small>Masukkan akun untuk membuka sistem.</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Username</label>
+                            <input type="text" id="usernameInput" placeholder="Masukkan username" value="Angga" autocomplete="username">
+                        </div>
+                        <div class="field">
+                            <label>Password</label>
+                            <input type="password" id="passwordInput" placeholder="Masukkan password" value="gajahsena" autocomplete="current-password">
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn" id="loginBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Masuk
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+            MAIN APP
+            ========================================================== -->
+            <div id="mainApp" class="hidden">
+
+                <div class="card-head">
+                    <div>
+                        <div class="eyebrow">AutoKop SK PSI</div>
+                        <h2>Kelola nomor SK</h2>
+                        <p>Buat nomor baru, cari data, atau download data SK.</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+
+                <!-- TABS -->
+                <div class="tabs">
+                    <button class="tab active" data-tab="tab1">
+                        <i class="fas fa-plus-circle"></i>
+                        Buat SK
+                    </button>
+                    <button class="tab" data-tab="tab2">
+                        <i class="fas fa-search"></i>
+                        Pencarian SK
+                    </button>
+                    <button class="tab" data-tab="tab3">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                </div>
+
+                <!-- ==========================================================
+                TAB 1 — BUAT SK
+                ========================================================== -->
+                <div id="tab1" class="tab-content">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <div class="num">01</div>
+                            <div>
+                                <strong>Pilih jenis surat</strong>
+                                <small>Tentukan tingkat, kategori, kode, dan wilayah.</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="field">
+                                <label>Tingkat</label>
+                                <select id="tingkatSelect">
+                                    <option value="DPW">DPW</option>
+                                    <option value="DPD">DPD</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Kategori</label>
+                                <select id="kategoriSelect">
+                                    <option value="Umum">Umum</option>
+                                    <option value="Khusus">Khusus</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="field">
+                                <label>Kode surat</label>
+                                <select id="kodeSuratSelect"></select>
+                            </div>
+                            <div class="field">
+                                <label>Wilayah / Provinsi <span class="req">*</span></label>
+                                <select id="wilayahSelect">
+                                    <option value="">-- Pilih provinsi --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row" id="kabupatenRow" style="display:none">
+                            <div class="field">
+                                <label>Kabupaten/Kota <span class="req">*</span></label>
+                                <select id="kabupatenSelect">
+                                    <option value="">-- Pilih --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button class="btn" id="generateBtn">
+                                <i class="fas fa-pen-fancy"></i>
+                                Buat &amp; simpan
+                            </button>
+                        </div>
+
+                        <div id="resultPreview" class="result-box hidden">
+                            <div class="result-line">
+                                <span class="pre" id="resultNomor"></span>
+                                <span>
+                                    <i class="far fa-calendar-alt"></i>
+                                    <span id="resultTanggal"></span>
+                                </span>
+                            </div>
+                            <div class="success">
+                                <i class="fas fa-check-circle"></i>
+                                Tersimpan di database
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================================
+                TAB 2 — CARI SK
+                ========================================================== -->
+                <div id="tab2" class="tab-content hidden">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <div class="num">02</div>
+                            <div>
+                                <strong>Pencarian SK</strong>
+                                <small>Cari berdasarkan nomor, wilayah, kabupaten, tingkat, atau kombinasi filter.</small>
+                            </div>
+                        </div>
+
+                        <div class="search-layout">
+                            <!-- FILTER -->
+                            <div class="search-filter-card">
+                                <div class="search-filter-title">
+                                    <i class="fas fa-filter"></i>
+                                    <div>
+                                        <strong>Filter Pencarian</strong>
+                                        <small>Gunakan satu atau beberapa filter sekaligus.</small>
+                                    </div>
+                                </div>
+
+                                <div class="search-fields">
+                                    <div class="field search-keyword">
+                                        <label>Nomor / Wilayah / Kabupaten</label>
+                                        <input type="text" id="searchInput" placeholder="Contoh: 001/A/DPW/XXVII/2026">
+                                    </div>
+                                    <div class="field">
+                                        <label>Tingkat</label>
+                                        <select id="searchTingkat">
+                                            <option value="">Semua Tingkat</option>
+                                            <option value="DPW">DPW</option>
+                                            <option value="DPD">DPD</option>
+                                        </select>
+                                    </div>
+                                    <div class="field">
+                                        <label>Wilayah / Provinsi</label>
+                                        <select id="searchWilayah">
+                                            <option value="">Semua Wilayah</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="search-action-row">
+                                    <button class="btn" id="searchBtn">
+                                        <i class="fas fa-search"></i>
+                                        Cari Data
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" id="refreshBtn">
+                                        <i class="fas fa-sync"></i>
+                                        Reset / Muat Ulang
+                                    </button>
+                                </div>
+
+                                <div class="search-result-info">
+                                    <i class="fas fa-database"></i>
+                                    <span>
+                                        Menampilkan
+                                        <strong id="searchResultCount">0</strong>
+                                        data
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- LAPORAN ERROR -->
+                            <div class="report-card">
+                                <div class="report-icon">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <strong>Mengalami masalah?</strong>
+                                <p>
+                                    Jika ada error saat pembuatan SK atau terjadi
+                                    error pada website, silakan laporkan agar dapat
+                                    segera diperiksa dan diperbaiki.
+                                </p>
+                                <p class="report-person">
+                                    <b>AnggaPutraJN</b> — Wakasek 2 PSI Gajah Sena
+                                </p>
+                                <a class="report-wa" href="https://wa.me/6282286344446" target="_blank" rel="noopener noreferrer">
+                                    <i class="fab fa-whatsapp"></i>
+                                    WhatsApp: 082286344446
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- TABLE -->
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nomor SK</th>
+                                        <th>Tanggal</th>
+                                        <th>Tingkat</th>
+                                        <th>Kode</th>
+                                        <th>Wilayah</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="searchTableBody">
+                                    <tr>
+                                        <td colspan="5" class="empty">Login untuk melihat data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================================
+                TAB 3 — DOWNLOAD
+                ========================================================== -->
+                <div id="tab3" class="tab-content hidden">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <div class="num">03</div>
+                            <div>
+                                <strong>Download Data SK</strong>
+                                <small>Export data SK dari Google Sheets ke Excel atau PDF.</small>
+                            </div>
+                        </div>
+
+                        <div class="download-intro">
+                            <div class="download-intro-head">
+                                <div class="download-icon">
+                                    <i class="fas fa-file-export"></i>
+                                </div>
+                                <div>
+                                    <strong>Export data administrasi SK</strong>
+                                    <span>
+                                        Pilih cakupan data yang ingin diunduh.
+                                        Data akan disusun otomatis dalam format yang rapi.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="download-filter">
+                            <div class="field">
+                                <label>Data yang akan di-download</label>
+                                <select id="downloadScope">
+                                    <option value="ALL">Semua Data DPD &amp; DPW</option>
+                                    <option value="DPW">Data DPW saja</option>
+                                    <option value="DPD">Data DPD saja</option>
+                                </select>
+                            </div>
+                            <div class="download-count" id="downloadCount">
+                                <i class="fas fa-database"></i>
+                                <span>Data:</span>
+                                <strong id="downloadCountNumber">0</strong>
+                            </div>
+                        </div>
+
+                        <div class="download-buttons">
+                            <button type="button" class="download-btn excel" id="downloadExcelBtn">
+                                <div class="download-btn-icon">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="download-btn-text">
+                                    <strong>Download Excel</strong>
+                                    <small>Format .xlsx dengan header, filter, freeze pane, dan kolom rapi.</small>
+                                </div>
+                            </button>
+                            <button type="button" class="download-btn pdf" id="downloadPdfBtn">
+                                <div class="download-btn-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="download-btn-text">
+                                    <strong>Download PDF</strong>
+                                    <small>Format A4 landscape dengan judul, informasi data, dan tabel profesional.</small>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="download-preview">
+                            <div class="download-preview-head">
+                                <strong>Ringkasan data</strong>
+                                <span id="downloadPreviewType">Semua Data DPD &amp; DPW</span>
+                            </div>
+                            <div class="download-preview-body" id="downloadPreviewBody">
+                                Data akan diambil dari data SK yang sudah dimuat.
+                            </div>
+                        </div>
+
+                        <div class="download-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>
+                                File Excel dan PDF dibuat langsung di browser berdasarkan
+                                data Google Sheets yang telah dimuat. Tidak mengubah
+                                maupun menghapus data asli di spreadsheet.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer" style="margin-top:18px;color:#6f727c;font-size:11px;display:flex;justify-content:flex-end;gap:7px;">
+                    <i class="fas fa-database"></i>
+                    Data tersimpan di Google Sheets
+                </div>
+
+            </div><!-- /mainApp -->
+        </section>
+
+        <!-- ============================================================
+        TIPS — bagian bawah (full width)
+        ============================================================ -->
+        <section class="tips-section">
+            <div class="tips-inner">
+                <div class="tips-grid">
+
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <strong>Responsif</strong>
+                            <small>Loading ditampilkan saat server memproses data.</small>
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div>
+                            <strong>Data tersimpan</strong>
+                            <small>Data SK disimpan pada Google Sheets.</small>
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div>
+                            <strong>Download data</strong>
+                            <small>Export seluruh data, DPW saja, atau DPD saja.</small>
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <strong>Anti spam klik</strong>
+                            <small>Tombol otomatis terkunci selama request berjalan.</small>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tips-footer">
+                    <i class="fas fa-lock"></i>
+                    Koneksi request menggunakan JSONP agar tetap dapat dipakai dari file HTML lokal.
+                    <span style="margin-left:auto;opacity:.6;">
+                        <i class="far fa-clock"></i> &nbsp;AutoKop SK PSI v2
+                    </span>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /app -->
+
+    <!-- ============================================================
+    LOADING OVERLAY
+    ============================================================ -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader-card">
+            <div class="spinner"></div>
+            <strong id="loadingText">Memproses…</strong>
+            <span id="loadingSub">Mohon tunggu, jangan klik tombol berulang.</span>
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ============================================================
+    SCRIPT
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // KONFIGURASI
+        // ============================================================
+        const API_DATA =
+            "https://script.google.com/macros/s/AKfycbwUVKBd3YQkOYqxnBTc2JSooIku_6iO__AJIP4uecQqGyoVGivVHzjwoRiZxek0Mjan/exec";
+
+        const REQUEST_TIMEOUT = 20000;
+
+        // ============================================================
+        // DATA WILAYAH
+        // ============================================================
+        const WILAYAH = {
+            "II": "Sumatera Utara",
+            "III": "Sumatera Barat",
+            "IV": "Riau",
+            "V": "Jambi",
+            "VI": "Sumatera Selatan",
+            "XXVI": "Sulawesi Tengah",
+            "XXVII": "Sulawesi Selatan",
+            "XXXII": "Maluku Utara",
+            "XXXIII": "Papua Barat",
+            "XXXIV": "Papua Barat Daya",
+            "XXXV": "Papua",
+            "XXXVI": "Papua Selatan",
+            "XXXVII": "Papua Tengah",
+            "XXXVIII": "Papua Pegunungan"
+        };
+
+        // ============================================================
+        // DATA KABUPATEN / KOTA
+        // ============================================================
+        const KABUPATEN = {
+            "XXVII": {
+                "XXVII-001": "Kepulauan Selayar",
+                "XXVII-002": "Bulukumba",
+                "XXVII-003": "Bantaeng",
+                "XXVII-004": "Jeneponto",
+                "XXVII-005": "Takalar",
+                "XXVII-006": "Gowa",
+                "XXVII-007": "Sinjai",
+                "XXVII-008": "Maros",
+                "XXVII-009": "Pangkajene Dan Kepulauan",
+                "XXVII-010": "Barru",
+                "XXVII-011": "Bone",
+                "XXVII-012": "Soppeng",
+                "XXVII-013": "Wajo",
+                "XXVII-014": "Sidenreng Rappang",
+                "XXVII-015": "Pinrang",
+                "XXVII-016": "Enrekang",
+                "XXVII-017": "Luwu",
+                "XXVII-018": "Tana Toraja",
+                "XXVII-019": "Luwu Utara",
+                "XXVII-020": "Luwu Timur",
+                "XXVII-021": "Toraja Utara",
+                "XXVII-022": "Makassar",
+                "XXVII-023": "Parepare",
+                "XXVII-024": "Palopo"
+            },
+            "II": {
+                "II-001": "Nias",
+                "II-002": "Mandailing Natal",
+                "II-003": "Tapanuli Selatan",
+                "II-004": "Tapanuli Tengah",
+                "II-005": "Tapanuli Utara",
+                "II-006": "Toba",
+                "II-007": "Labuhanbatu",
+                "II-008": "Asahan",
+                "II-009": "Simalungun",
+                "II-010": "Dairi",
+                "II-011": "Karo",
+                "II-012": "Deli Serdang",
+                "II-013": "Langkat",
+                "II-014": "Nias Selatan",
+                "II-015": "Humbang Hasundutan",
+                "II-016": "Pakpak Bharat",
+                "II-017": "Samosir",
+                "II-018": "Serdang Bedagai",
+                "II-019": "Batu Bara",
+                "II-020": "Padang Lawas Utara",
+                "II-021": "Padang Lawas",
+                "II-022": "Labuhanbatu Selatan",
+                "II-023": "Labuhanbatu Utara",
+                "II-024": "Nias Utara",
+                "II-025": "Nias Barat",
+                "II-026": "Sibolga",
+                "II-027": "Tanjungbalai",
+                "II-028": "Pematangsiantar",
+                "II-029": "Tebing Tinggi",
+                "II-030": "Medan",
+                "II-031": "Binjai",
+                "II-032": "Padangsidimpuan",
+                "II-033": "Gunungsitoli"
+            },
+            "III": {
+                "III-001": "Kepulauan Mentawai",
+                "III-002": "Pesisir Selatan",
+                "III-003": "Solok",
+                "III-004": "Sijunjung",
+                "III-005": "Tanah Datar",
+                "III-006": "Padang Pariaman",
+                "III-007": "Agam",
+                "III-008": "Lima Puluh Kota",
+                "III-009": "Pasaman",
+                "III-010": "Solok Selatan",
+                "III-011": "Dharmasraya",
+                "III-012": "Pasaman Barat",
+                "III-013": "Padang",
+                "III-014": "Solok",
+                "III-015": "Sawahlunto",
+                "III-016": "Padang Panjang",
+                "III-017": "Bukittinggi",
+                "III-018": "Payakumbuh",
+                "III-019": "Pariaman"
+            },
+            "XXVI": {
+                "XXVI-001": "Banggai Kepulauan",
+                "XXVI-002": "Banggai",
+                "XXVI-003": "Morowali",
+                "XXVI-004": "Poso",
+                "XXVI-005": "Donggala",
+                "XXVI-006": "Toli-toli",
+                "XXVI-007": "Buol",
+                "XXVI-008": "Parigi Moutong",
+                "XXVI-009": "Tojo Una Una",
+                "XXVI-010": "Sigi",
+                "XXVI-011": "Banggai Laut",
+                "XXVI-012": "Morowali Utara",
+                "XXVI-013": "Palu"
+            },
+            "XXXII": {
+                "XXXII-001": "Halmahera Barat",
+                "XXXII-002": "Halmahera Tengah",
+                "XXXII-003": "Kepulauan Sula",
+                "XXXII-004": "Halmahera Selatan",
+                "XXXII-005": "Halmahera Utara",
+                "XXXII-006": "Halmahera Timur",
+                "XXXII-007": "Pulau Morotai",
+                "XXXII-008": "Pulau Taliabu",
+                "XXXII-009": "Ternate",
+                "XXXII-010": "Tidore Kepulauan"
+            }
+        };
+
+        // ============================================================
+        // ELEMENT
+        // ============================================================
+        const $ = id => document.getElementById(id);
+
+        const usernameInput = $('usernameInput'),
+            passwordInput = $('passwordInput');
+        const loginBtn = $('loginBtn'),
+            logoutBtn = $('logoutBtn');
+        const loginSection = $('loginSection'),
+            mainApp = $('mainApp');
+
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = {
+            tab1: $('tab1'),
+            tab2: $('tab2'),
+            tab3: $('tab3')
+        };
+
+        const tingkatSelect = $('tingkatSelect'),
+            kategoriSelect = $('kategoriSelect');
+        const kodeSuratSelect = $('kodeSuratSelect'),
+            wilayahSelect = $('wilayahSelect');
+        const kabupatenRow = $('kabupatenRow'),
+            kabupatenSelect = $('kabupatenSelect');
+        const generateBtn = $('generateBtn'),
+            resultPreview = $('resultPreview');
+        const resultNomor = $('resultNomor'),
+            resultTanggal = $('resultTanggal');
+
+        const searchInput = $('searchInput'),
+            searchBtn = $('searchBtn'),
+            refreshBtn = $('refreshBtn');
+        const searchTingkat = $('searchTingkat'),
+            searchWilayah = $('searchWilayah'),
+            searchResultCount = $('searchResultCount');
+        const searchTableBody = $('searchTableBody');
+
+        const downloadScope = $('downloadScope');
+        const downloadExcelBtn = $('downloadExcelBtn');
+        const downloadPdfBtn = $('downloadPdfBtn');
+        const downloadCountNumber = $('downloadCountNumber');
+        const downloadPreviewType = $('downloadPreviewType');
+        const downloadPreviewBody = $('downloadPreviewBody');
+
+        const toast = $('toast'),
+            loadingOverlay = $('loadingOverlay'),
+            loadingText = $('loadingText'),
+            loadingSub = $('loadingSub');
+
+        let currentUser = null,
+            allSkData = [],
+            busy = false;
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(showToast.timer);
+            showToast.timer = setTimeout(() => toast.classList.remove('show'), 3200);
+        }
+
+        // ============================================================
+        // LOADING
+        // ============================================================
+        function setLoading(active, title = 'Memproses…', sub = 'Mohon tunggu, jangan klik tombol berulang.') {
+            busy = active;
+            loadingText.textContent = title;
+            loadingSub.textContent = sub;
+            loadingOverlay.classList.toggle('hidden', !active);
+            document.body.classList.toggle('is-loading', active);
+            [loginBtn, logoutBtn, generateBtn, searchBtn, refreshBtn, downloadExcelBtn, downloadPdfBtn].forEach(b => {
+                if (b) b.disabled = active;
+            });
+        }
+
+        // ============================================================
+        // JSONP API
+        // ============================================================
+        function apiCall(action, payload = {}) {
+            return new Promise(resolve => {
+                const callbackName = '__autoKopCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+                const script = document.createElement('script');
+                const params = new URLSearchParams({
+                    action,
+                    ...payload,
+                    callback: callbackName,
+                    _: Date.now().toString()
+                });
+                let finished = false;
+
+                const cleanup = () => {
+                    finished = true;
+                    clearTimeout(timer);
+                    script.remove();
+                    try { delete window[callbackName]; } catch (e) {}
+                };
+
+                const timer = setTimeout(() => {
+                    if (finished) return;
+                    cleanup();
+                    resolve({ status: 'error', message: 'Server terlalu lama merespons. Coba lagi.' });
+                }, REQUEST_TIMEOUT);
+
+                window[callbackName] = data => {
+                    if (finished) return;
+                    cleanup();
+                    resolve(data);
+                };
+
+                script.onerror = () => {
+                    if (finished) return;
+                    cleanup();
+                    resolve({ status: 'error',
+                        message: 'Endpoint Google Apps Script tidak dapat diakses (404/CORS). Periksa deployment Web App.'
+                    });
+                };
+
+                script.src = API_DATA + '?' + params.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+        // ============================================================
+        // REQUEST WRAPPER
+        // ============================================================
+        async function runRequest(title, sub, fn) {
+            if (busy) {
+                return { status: 'error', message: 'Request masih diproses. Tunggu sampai selesai.' };
+            }
+            setLoading(true, title, sub);
+            try {
+                return await fn();
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // ============================================================
+        // LOGIN
+        // ============================================================
+        async function login(username, password) {
+            if (busy) return;
+            username = username.trim();
+            if (!username || !password) {
+                showToast('Username dan password wajib diisi.');
+                return;
+            }
+            const result = await runRequest('Memverifikasi login…', 'Menghubungkan ke Google Sheets.', () =>
+                apiCall('auth', { user: username, pass: password })
+            );
+            if (result.status === 'ok') {
+                currentUser = username;
+                loginSection.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                showToast('Selamat datang, ' + username);
+                await runRequest('Memuat data SK…', 'Menyiapkan data pencarian dan download.', () =>
+                    loadData(true));
+                updateDownloadInfo();
+            } else {
+                showToast('Login gagal: ' + (result.message || 'Periksa username/password.'));
+            }
+        }
+
+        loginBtn.addEventListener('click', () => login(usernameInput.value, passwordInput.value));
+        [usernameInput, passwordInput].forEach(el =>
+            el.addEventListener('keydown', e => { if (e.key === 'Enter') login(usernameInput.value, passwordInput
+                    .value); })
+        );
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        logoutBtn.addEventListener('click', () => {
+            if (busy) return;
+            currentUser = null;
+            loginSection.classList.remove('hidden');
+            mainApp.classList.add('hidden');
+            allSkData = [];
+            searchTableBody.innerHTML = '<tr><td colspan="5" class="empty">Login untuk melihat data</td></tr>';
+            searchResultCount.textContent = '0';
+            updateDownloadInfo();
+            showToast('Anda telah logout.');
+        });
+
+        // ============================================================
+        // LOAD DATA
+        // ============================================================
+        async function loadData(silent = false) {
+            const result = await apiCall('getAll');
+            if (result.status === 'ok') {
+                allSkData = Array.isArray(result.data) ? result.data : [];
+                renderSearchTable(allSkData);
+                updateDownloadInfo();
+                return result;
+            }
+            if (!silent) showToast('Gagal memuat data: ' + (result.message || ''));
+            searchTableBody.innerHTML =
+                '<tr><td colspan="5" class="empty">Gagal memuat data. Tekan Muat ulang.</td></tr>';
+            searchResultCount.textContent = '0';
+            updateDownloadInfo();
+            return result;
+        }
+
+        // ============================================================
+        // ESCAPE HTML
+        // ============================================================
+        function esc(v) {
+            return String(v ?? '-').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;',
+                '"': '&quot;' }[c]));
+        }
+
+        // ============================================================
+        // RENDER TABLE
+        // ============================================================
+        function renderSearchTable(arr) {
+            if (searchResultCount) searchResultCount.textContent = Array.isArray(arr) ? arr.length : 0;
+            if (!arr || !arr.length) {
+                searchTableBody.innerHTML = '<tr><td colspan="5" class="empty">Tidak ada data SK yang sesuai dengan pencarian.</td></tr>';
+                return;
+            }
+            searchTableBody.innerHTML = arr.map(d => {
+                const w = d.wilayah ? (WILAYAH[d.wilayah] || d.wilayah) : '-';
+                const k = d.kabupaten ? (KABUPATEN[d.wilayah]?.[d.kabupaten] || d.kabupaten) : '';
+                return `<tr>
+              <td><strong>${esc(d.nomor)}</strong></td>
+              <td>${esc(d.tanggal)}</td>
+              <td>${esc(d.tingkat)}</td>
+              <td>${esc(d.kodeSurat)}</td>
+              <td>${esc(w)}${k ? ' — '+esc(k) : ''}</td>
+            </tr>`;
+            }).join('');
+        }
+
+        // ============================================================
+        // WILAYAH
+        // ============================================================
+        function populateWilayah() {
+            wilayahSelect.innerHTML = '<option value="">-- Pilih provinsi --</option>';
+            searchWilayah.innerHTML = '<option value="">Semua Wilayah</option>';
+            Object.entries(WILAYAH).forEach(([kode, nama]) => {
+                wilayahSelect.insertAdjacentHTML('beforeend',
+                    `<option value="${esc(kode)}">${esc(kode)} — ${esc(nama)}</option>`);
+                searchWilayah.insertAdjacentHTML('beforeend',
+                    `<option value="${esc(kode)}">${esc(kode)} — ${esc(nama)}</option>`);
+            });
+        }
+        populateWilayah();
+
+        // ============================================================
+        // KODE SURAT
+        // ============================================================
+        function updateKodeSurat() {
+            const options = kategoriSelect.value === 'Umum' ? ['A', 'B', 'C'] : ['SK', 'INS', 'TUGAS', 'KET'];
+            const labels = {
+                A: 'A — Urusan Organisasi',
+                B: 'B — Urusan Personalia',
+                C: 'C — Urusan Keuangan',
+                SK: 'SK — Surat Keputusan',
+                INS: 'INS — Surat Instruksi',
+                TUGAS: 'TUGAS — Surat Tugas',
+                KET: 'KET — Surat Keterangan'
+            };
+            kodeSuratSelect.innerHTML = options.map(v =>
+                `<option value="${esc(v)}">${esc(labels[v])}</option>`
+            ).join('');
+        }
+        kategoriSelect.addEventListener('change', updateKodeSurat);
+        updateKodeSurat();
+
+        // ============================================================
+        // KABUPATEN
+        // ============================================================
+        function updateKabupaten() {
+            const kodeWil = wilayahSelect.value;
+            kabupatenSelect.innerHTML = '<option value="">-- Pilih --</option>';
+            if (kodeWil && KABUPATEN[kodeWil]) {
+                Object.entries(KABUPATEN[kodeWil]).forEach(([k, n]) =>
+                    kabupatenSelect.insertAdjacentHTML('beforeend',
+                        `<option value="${esc(k)}">${esc(k)} — ${esc(n)}</option>`)
+                );
+            }
+        }
+
+        tingkatSelect.addEventListener('change', () => {
+            if (tingkatSelect.value === 'DPD') {
+                kabupatenRow.style.display = 'grid';
+                updateKabupaten();
+            } else {
+                kabupatenRow.style.display = 'none';
+                kabupatenSelect.value = '';
+            }
+        });
+        wilayahSelect.addEventListener('change', () => {
+            if (tingkatSelect.value === 'DPD') updateKabupaten();
+        });
+
+        // ============================================================
+        // GENERATE SK
+        // ============================================================
+        generateBtn.addEventListener('click', async () => {
+            if (busy) return;
+            const tingkat = tingkatSelect.value;
+            const kategori = kategoriSelect.value;
+            const kodeSurat = kodeSuratSelect.value;
+            const kodeWil = wilayahSelect.value;
+            if (!kodeWil) { showToast('Pilih wilayah / provinsi.'); return; }
+            let kodeKab = '';
+            if (tingkat === 'DPD') {
+                kodeKab = kabupatenSelect.value;
+                if (!kodeKab) { showToast('Pilih kabupaten/kota.'); return; }
+            }
+            const random = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+            const nomor = tingkat === 'DPW' ?
+                `${random}/${kodeSurat}/${tingkat}/${kodeWil}/2026` :
+                `${random}/${kodeSurat}/${tingkat}/${kodeKab}/2026`;
+            const tanggal = new Date().toISOString().split('T')[0];
+            const payload = {
+                nomor,
+                tanggal,
+                tingkat,
+                kategori,
+                kodeSurat,
+                wilayah: kodeWil,
+                kabupaten: kodeKab,
+                user: currentUser || 'system'
+            };
+            const result = await runRequest('Menyimpan SK…', 'Server sedang menyimpan nomor SK.', () =>
+                apiCall('save', payload)
+            );
+            if (result.status === 'ok') {
+                resultPreview.classList.remove('hidden');
+                resultNomor.textContent = result.nomor || nomor;
+                resultTanggal.textContent = tanggal;
+                showToast('SK tersimpan: ' + (result.nomor || nomor));
+                await runRequest('Memperbarui data…', 'Memuat daftar SK terbaru.', () => loadData(true));
+            } else {
+                showToast('Gagal simpan: ' + (result.message || ''));
+            }
+        });
+
+        // ============================================================
+        // SEARCH FILTER
+        // ============================================================
+        function filterSearchData() {
+            const q = searchInput.value.trim().toLowerCase();
+            const tingkat = searchTingkat.value.trim().toUpperCase();
+            const wilayah = searchWilayah.value.trim().toUpperCase();
+            return allSkData.filter(d => {
+                const dataTingkat = String(d.tingkat || '').trim().toUpperCase();
+                if (tingkat && dataTingkat !== tingkat) return false;
+                const dataWilayah = String(d.wilayah || '').trim().toUpperCase();
+                if (wilayah && dataWilayah !== wilayah) return false;
+                if (!q) return true;
+                const nomor = String(d.nomor || '').toLowerCase();
+                const wilayahKode = String(d.wilayah || '').toLowerCase();
+                const wilayahNama = String(WILAYAH[d.wilayah] || '').toLowerCase();
+                const kabupatenKode = String(d.kabupaten || '').toLowerCase();
+                const kabupatenNama = String(KABUPATEN[d.wilayah]?.[d.kabupaten] || '').toLowerCase();
+                const kodeSurat = String(d.kodeSurat || '').toLowerCase();
+                const kategori = String(d.kategori || '').toLowerCase();
+                const tanggal = String(d.tanggal || '').toLowerCase();
+                const tingkatData = String(d.tingkat || '').toLowerCase();
+                return nomor.includes(q) || wilayahKode.includes(q) || wilayahNama.includes(q) ||
+                    kabupatenKode.includes(q) || kabupatenNama.includes(q) ||
+                    kodeSurat.includes(q) || kategori.includes(q) || tanggal.includes(q) || tingkatData.includes(q);
+            });
+        }
+
+        // ============================================================
+        // SEARCH BUTTON
+        // ============================================================
+        searchBtn.addEventListener('click', () => {
+            if (busy) return;
+            const filtered = filterSearchData();
+            renderSearchTable(filtered);
+            const q = searchInput.value.trim();
+            const tingkat = searchTingkat.value;
+            const wilayah = searchWilayah.value;
+            const activeFilters = [];
+            if (q) activeFilters.push('kata kunci');
+            if (tingkat) activeFilters.push(tingkat);
+            if (wilayah) activeFilters.push(WILAYAH[wilayah] || wilayah);
+            if (activeFilters.length) {
+                showToast(`${filtered.length} data ditemukan dengan filter: ${activeFilters.join(', ')}.`);
+            } else {
+                showToast(`Menampilkan ${filtered.length} data.`);
+            }
+        });
+
+        searchInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !busy) searchBtn.click(); });
+        searchTingkat.addEventListener('keydown', e => { if (e.key === 'Enter' && !busy) searchBtn.click(); });
+        searchWilayah.addEventListener('keydown', e => { if (e.key === 'Enter' && !busy) searchBtn.click(); });
+
+        // ============================================================
+        // REFRESH / RESET
+        // ============================================================
+        refreshBtn.addEventListener('click', async () => {
+            if (busy) return;
+            searchInput.value = '';
+            searchTingkat.value = '';
+            searchWilayah.value = '';
+            await runRequest('Memuat ulang data…', 'Mengambil data terbaru dari Google Sheets.', () => loadData(
+            false));
+        });
+
+        // ============================================================
+        // DOWNLOAD — DATA FILTER
+        // ============================================================
+        function getDownloadData() {
+            const scope = downloadScope.value;
+            if (scope === 'DPW') return allSkData.filter(d => String(d.tingkat || '').toUpperCase() === 'DPW');
+            if (scope === 'DPD') return allSkData.filter(d => String(d.tingkat || '').toUpperCase() === 'DPD');
+            return [...allSkData];
+        }
+
+        function getWilayahName(kode) { return kode ? (WILAYAH[kode] || kode) : '-'; }
+
+        function getKabupatenName(wilayah, kabupaten) {
+            return kabupaten ? (KABUPATEN[wilayah]?.[kabupaten] || kabupaten) : '';
+        }
+
+        function prepareExportRows(data) {
+            return data.map((d, index) => ({
+                "No": index + 1,
+                "Nomor SK": d.nomor || '',
+                "Tanggal": d.tanggal || '',
+                "Tingkat": d.tingkat || '',
+                "Kategori": d.kategori || '',
+                "Kode Surat": d.kodeSurat || '',
+                "Kode Wilayah": d.wilayah || '',
+                "Wilayah / Provinsi": getWilayahName(d.wilayah),
+                "Kode Kabupaten/Kota": d.kabupaten || '',
+                "Kabupaten/Kota": getKabupatenName(d.wilayah, d.kabupaten),
+                "Dibuat Oleh": d.user || ''
+            }));
+        }
+
+        // ============================================================
+        // DOWNLOAD INFO
+        // ============================================================
+        function updateDownloadInfo() {
+            const data = getDownloadData();
+            const scope = downloadScope ? downloadScope.value : 'ALL';
+            let scopeLabel = 'Semua Data DPD & DPW';
+            if (scope === 'DPW') scopeLabel = 'Data DPW saja';
+            if (scope === 'DPD') scopeLabel = 'Data DPD saja';
+            if (downloadCountNumber) downloadCountNumber.textContent = data.length;
+            if (downloadPreviewType) downloadPreviewType.textContent = scopeLabel;
+            if (downloadPreviewBody) {
+                if (!data.length) {
+                    downloadPreviewBody.innerHTML = '<i class="fas fa-info-circle"></i> Tidak ada data untuk cakupan yang dipilih.';
+                    return;
+                }
+                const dpw = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPW').length;
+                const dpd = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPD').length;
+                const latest = data.slice().reverse()[0];
+                downloadPreviewBody.innerHTML =
+                    `<i class="fas fa-check-circle"></i> Tersedia <strong>${data.length}</strong> data. DPW: <strong>${dpw}</strong>, DPD: <strong>${dpd}</strong>. ` +
+                    (latest ? `Data terbaru: <strong>${esc(latest.nomor || '-')}</strong>.` : '');
+            }
+        }
+
+        downloadScope.addEventListener('change', updateDownloadInfo);
+
+        // ============================================================
+        // DOWNLOAD EXCEL
+        // ============================================================
+        function downloadExcel() {
+            if (busy) return;
+            if (typeof XLSX === 'undefined') { showToast('Library Excel belum selesai dimuat. Coba lagi.'); return; }
+            const data = getDownloadData();
+            if (!data.length) { showToast('Tidak ada data yang dapat di-download.'); return; }
+            const scope = downloadScope.value;
+            let scopeLabel = 'SEMUA DATA DPD & DPW';
+            if (scope === 'DPW') scopeLabel = 'DATA DPW';
+            if (scope === 'DPD') scopeLabel = 'DATA DPD';
+            setLoading(true, 'Membuat file Excel…', `Menyiapkan ${data.length} data SK.`);
+            try {
+                const rows = prepareExportRows(data);
+                const workbook = XLSX.utils.book_new();
+                const worksheet = XLSX.utils.json_to_sheet(rows, { origin: 'A5' });
+                XLSX.utils.sheet_add_aoa(worksheet, [
+                    ['AUTOKOP SK — PARTAI SOLIDARITAS INDONESIA'],
+                    [scopeLabel],
+                    ['Data SK yang tersimpan pada Google Sheets'],
+                    ['Tanggal Export:', new Date().toLocaleString('id-ID')]
+                ], { origin: 'A1' });
+                worksheet['!cols'] = [
+                    { wch: 6 }, { wch: 32 }, { wch: 14 }, { wch: 10 }, { wch: 14 },
+                    { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 24 }, { wch: 28 }, { wch: 20 }
+                ];
+                worksheet['!freeze'] = { xSplit: 0, ySplit: 5 };
+                const lastRow = rows.length + 5;
+                worksheet['!autofilter'] = { ref: `A5:K${lastRow}` };
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data SK');
+                const totalDPW = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPW').length;
+                const totalDPD = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPD').length;
+                const summaryRows = [
+                    ['RINGKASAN DATA SK'],
+                    [''],
+                    ['Cakupan', scopeLabel],
+                    ['Total Data', data.length],
+                    ['Total DPW', totalDPW],
+                    ['Total DPD', totalDPD],
+                    ['Tanggal Export', new Date().toLocaleString('id-ID')],
+                    [''],
+                    ['Keterangan', 'Data berasal dari Google Sheets AutoKop SK PSI']
+                ];
+                const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+                summarySheet['!cols'] = [{ wch: 25 }, { wch: 65 }];
+                XLSX.utils.book_append_sheet(workbook, summarySheet, 'Ringkasan');
+                const date = new Date().toISOString().slice(0, 10);
+                const scopeFile = scope === 'DPW' ? 'DPW' : scope === 'DPD' ? 'DPD' : 'SEMUA';
+                const filename = `AutoKop_SK_${scopeFile}_${date}.xlsx`;
+                XLSX.writeFile(workbook, filename);
+                showToast(`Excel berhasil dibuat: ${data.length} data.`);
+            } catch (error) {
+                console.error('Export Excel error:', error);
+                showToast('Gagal membuat file Excel: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        downloadExcelBtn.addEventListener('click', downloadExcel);
+
+        // ============================================================
+        // DOWNLOAD PDF
+        // ============================================================
+        function downloadPdf() {
+            if (busy) return;
+            if (typeof window.jspdf === 'undefined') { showToast('Library PDF belum selesai dimuat. Coba lagi.'); return; }
+            const data = getDownloadData();
+            if (!data.length) { showToast('Tidak ada data yang dapat di-download.'); return; }
+            const scope = downloadScope.value;
+            let scopeLabel = 'SEMUA DATA DPD & DPW';
+            if (scope === 'DPW') scopeLabel = 'DATA DPW';
+            if (scope === 'DPD') scopeLabel = 'DATA DPD';
+            setLoading(true, 'Membuat file PDF…', `Menyiapkan ${data.length} data SK.`);
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(17);
+                doc.text('AUTOKOP SK', 14, 16);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.text('PARTAI SOLIDARITAS INDONESIA', 14, 22);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.text(scopeLabel, 14, 31);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text('Data SK yang tersimpan pada Google Sheets', 14, 36);
+                const exportDate = new Date().toLocaleString('id-ID');
+                doc.text(`Tanggal Export: ${exportDate}`, pageWidth - 14, 16, { align: 'right' });
+                doc.text(`Total Data: ${data.length}`, pageWidth - 14, 22, { align: 'right' });
+                const totalDPW = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPW').length;
+                const totalDPD = data.filter(d => String(d.tingkat || '').toUpperCase() === 'DPD').length;
+                doc.setFontSize(8);
+                doc.text(`DPW: ${totalDPW}    |    DPD: ${totalDPD}`, pageWidth - 14, 28, { align: 'right' });
+                const tableRows = data.map((d, index) => [
+                    index + 1,
+                    d.nomor || '',
+                    d.tanggal || '',
+                    d.tingkat || '',
+                    d.kategori || '',
+                    d.kodeSurat || '',
+                    getWilayahName(d.wilayah),
+                    getKabupatenName(d.wilayah, d.kabupaten),
+                    d.user || ''
+                ]);
+                doc.autoTable({
+                    startY: 42,
+                    head: [
+                        ['No', 'Nomor SK', 'Tanggal', 'Tingkat', 'Kategori', 'Kode', 'Wilayah / Provinsi',
+                            'Kabupaten / Kota', 'Dibuat Oleh'
+                        ]
+                    ],
+                    body: tableRows,
+                    theme: 'grid',
+                    styles: { font: 'helvetica', fontSize: 7, cellPadding: 2.3, valign: 'middle',
+                    overflow: 'linebreak' },
+                    headStyles: { fontStyle: 'bold', fontSize: 7, halign: 'center', valign: 'middle' },
+                    columnStyles: {
+                        0: { cellWidth: 9, halign: 'center' },
+                        1: { cellWidth: 38 },
+                        2: { cellWidth: 22 },
+                        3: { cellWidth: 18, halign: 'center' },
+                        4: { cellWidth: 22 },
+                        5: { cellWidth: 18 },
+                        6: { cellWidth: 47 },
+                        7: { cellWidth: 55 }
+                    },
+                    margin: { left: 14, right: 14, bottom: 18 },
+                    didDrawPage: function() {
+                        const pageNumber = doc.internal.getNumberOfPages();
+                        doc.setFontSize(7);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('AutoKop SK PSI · Data Administrasi', 14, pageHeight - 8);
+                        doc.text(`Halaman ${pageNumber}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
+                    }
+                });
+                const date = new Date().toISOString().slice(0, 10);
+                const scopeFile = scope === 'DPW' ? 'DPW' : scope === 'DPD' ? 'DPD' : 'SEMUA';
+                const filename = `AutoKop_SK_${scopeFile}_${date}.pdf`;
+                doc.save(filename);
+                showToast(`PDF berhasil dibuat: ${data.length} data.`);
+            } catch (error) {
+                console.error('Export PDF error:', error);
+                showToast('Gagal membuat file PDF: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        downloadPdfBtn.addEventListener('click', downloadPdf);
+
+        // ============================================================
+        // TAB
+        // ============================================================
+        tabs.forEach(tab =>
+            tab.addEventListener('click', () => {
+                if (busy) return;
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                Object.keys(tabContents).forEach(k =>
+                    tabContents[k].classList.toggle('hidden', k !== tab.dataset.tab)
+                );
+                if (tab.dataset.tab === 'tab3') updateDownloadInfo();
+            })
+        );
+
+        // ============================================================
+        // INITIAL
+        // ============================================================
+        updateDownloadInfo();
+        console.log('AutoKop SK PSI siap!');
+    </script>
+
+</body>
+</html>
