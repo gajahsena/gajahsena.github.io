@@ -105,7 +105,7 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
       <p class="hero-sub">Membuat SK Otomatis.</p>
       <div class="hero-extra">
         <span class="hero-badge"><i class="fas fa-check-circle"></i><span class="dot"></span><span id="systemStatus">Sistem siap</span></span>
-        <span class="hero-badge"><i class="fas fa-database"></i> Google Sheets</span>
+        <span class="hero-badge"><i class="fas fa-database"></i> Server</span>
         <span class="hero-badge"><i class="fas fa-file-pdf"></i> PDF SK editable</span>
       </div>
     </div>
@@ -176,8 +176,8 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
         <div class="report-card">
           <div class="report-icon"><i class="fas fa-headset"></i></div>
           <strong>Mengalami masalah?</strong>
-          <p>Jika ada error saat pembuatan SK atau website, silakan laporkan agar dapat segera diperiksa.</p>
-          <p class="report-person"><b>AnggaPutraJN</b> — Wakasek 2 PSI Gajah Sena</p>
+          <p>Jika ada error saat pembuatan SK atau websitenya bermasalah, silakan laporkan agar dapat segera diperiksa.</p>
+          <p class="report-person"><b>AnggaPutraJN</b> — PSI Gajah Sena</p>
           <a class="report-wa" href="https://wa.me/6282286344446" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp: 082286344446</a>
         </div>
       </div>
@@ -192,7 +192,7 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
 
   <div id="tab3" class="tab-content hidden">
     <div class="form-card">
-      <div class="section-title"><div class="num">03</div><div><strong>Download Data SK</strong><small>Export data SK dari Google Sheets ke Excel atau PDF.</small></div></div>
+      <div class="section-title"><div class="num">03</div><div><strong>Download Data SK</strong><small>Export data SK dari Server ke Excel atau PDF.</small></div></div>
       <div class="download-intro"><div class="download-intro-head"><div class="download-icon"><i class="fas fa-file-export"></i></div><div><strong>Export data administrasi SK</strong><span>Pilih cakupan data. File dibuat langsung di browser dan tidak mengubah spreadsheet.</span></div></div></div>
       <div class="download-filter"><div class="field"><label>Data yang akan di-download</label><select id="downloadScope"><option value="ALL">Semua Data DPD & DPW</option><option value="DPW">Data DPW saja</option><option value="DPD">Data DPD saja</option></select></div><div class="download-count"><i class="fas fa-database"></i><span>Data:</span><strong id="downloadCountNumber">0</strong></div></div>
       <div class="download-buttons">
@@ -203,7 +203,7 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
       <div class="download-note"><i class="fas fa-info-circle"></i><span>Jika koneksi server sedang bermasalah, data terakhir yang tersimpan di browser tetap dapat digunakan untuk export.</span></div>
     </div>
   </div>
-  <div style="margin-top:15px;color:var(--muted);font-size:9px;display:flex;justify-content:flex-end;gap:7px"><i class="fas fa-database"></i> Data tersimpan di Google Sheets</div>
+  <div style="margin-top:15px;color:var(--muted);font-size:9px;display:flex;justify-content:flex-end;gap:7px"><i class="fas fa-database"></i> Data tersimpan di Server</div>
 </div>
 </section>
 
@@ -415,13 +415,13 @@ function filterSearchData(){const q=$("searchInput").value.trim().toLowerCase(),
 function renderSearchTable(arr){$("searchResultCount").textContent=Array.isArray(arr)?arr.length:0;if(!arr?.length){$("searchTableBody").innerHTML='<tr><td colspan="6" class="empty">Tidak ada data SK yang sesuai.</td></tr>';return}$("searchTableBody").innerHTML=arr.map((d,i)=>{const w=getWilayahName(d.wilayah),k=getKabupatenName(d.wilayah,d.kabupaten);return `<tr><td><strong>${esc(d.nomor)}</strong></td><td>${esc(d.tanggal)}</td><td>${esc(d.tingkat)}</td><td>${esc(d.kodeSurat)}</td><td>${esc(w)}${k?" — "+esc(k):""}</td><td class="action-cell"><div class="action-group"><button class="mini-btn edit" onclick="openLetterEditor(${i})"><i class="fas fa-pen"></i> Edit PDF</button><button class="mini-btn pdf" onclick="quickRowPdf(${i})"><i class="fas fa-file-pdf"></i> PDF</button></div></td></tr>`}).join("")}
 $("searchBtn").onclick=()=>{if(busy)return;const f=filterSearchData();renderSearchTable(f);showToast(`${f.length} data ditemukan.`)};
 $("searchInput").onkeydown=e=>{if(e.key==="Enter"&&!busy)$("searchBtn").click()};
-$("refreshBtn").onclick=async()=>{if(busy)return;$("searchInput").value="";$("searchTingkat").value="";$("searchWilayah").value="";await runRequest("Memuat ulang data…","Mengambil data terbaru dari Google Sheets.",()=>loadData(true))};
+$("refreshBtn").onclick=async()=>{if(busy)return;$("searchInput").value="";$("searchTingkat").value="";$("searchWilayah").value="";await runRequest("Memuat ulang data…","Mengambil data terbaru dari Server.",()=>loadData(true))};
 
 function getDownloadData(){const s=$("downloadScope").value;if(s==="DPW")return allSkData.filter(d=>String(d.tingkat||"").toUpperCase()==="DPW");if(s==="DPD")return allSkData.filter(d=>String(d.tingkat||"").toUpperCase()==="DPD");return [...allSkData]}
 function prepareExportRows(data){return data.map((d,i)=>({"No":i+1,"Nomor SK":d.nomor||"","Tanggal":d.tanggal||"","Tingkat":d.tingkat||"","Kategori":d.kategori||"","Kode Surat":d.kodeSurat||"","Kode Wilayah":d.wilayah||"","Wilayah / Provinsi":getWilayahName(d.wilayah),"Kode Kabupaten/Kota":d.kabupaten||"","Kabupaten/Kota":getKabupatenName(d.wilayah,d.kabupaten),"Dibuat Oleh":d.user||""}))}
 function updateDownloadInfo(){const d=getDownloadData(),s=$("downloadScope").value;const label=s==="DPW"?"Data DPW saja":s==="DPD"?"Data DPD saja":"Semua Data DPD & DPW";$("downloadCountNumber").textContent=d.length;$("downloadPreviewType").textContent=label;const dpw=d.filter(x=>String(x.tingkat||"").toUpperCase()==="DPW").length,dpd=d.filter(x=>String(x.tingkat||"").toUpperCase()==="DPD").length;$("downloadPreviewBody").innerHTML=d.length?`<i class="fas fa-check-circle"></i> Tersedia <strong>${d.length}</strong> data. DPW: <strong>${dpw}</strong>, DPD: <strong>${dpd}</strong>.`:`<i class="fas fa-info-circle"></i> Tidak ada data untuk cakupan ini.`}
 $("downloadScope").onchange=updateDownloadInfo;
-$("downloadExcelBtn").onclick=async()=>{if(busy)return;const d=getDownloadData();if(!d.length){showToast("Tidak ada data.");return}setLoading(true,"Membuat file Excel…",`Menyiapkan ${d.length} data SK.`);try{if(typeof XLSX==="undefined")throw Error("Library Excel belum siap");const s=$("downloadScope").value,label=s==="DPW"?"DATA DPW":s==="DPD"?"DATA DPD":"SEMUA DATA DPD & DPW";const wb=XLSX.utils.book_new(),rows=prepareExportRows(d),ws=XLSX.utils.json_to_sheet(rows,{origin:"A5"});XLSX.utils.sheet_add_aoa(ws,[["AUTOKOP SK — PARTAI SOLIDARITAS INDONESIA"],[label],["Data SK yang tersimpan pada Google Sheets"],["Tanggal Export:",new Date().toLocaleString("id-ID")] ],{origin:"A1"});ws["!cols"]=[{wch:6},{wch:32},{wch:14},{wch:10},{wch:14},{wch:15},{wch:15},{wch:25},{wch:24},{wch:28},{wch:20}];ws["!freeze"]={xSplit:0,ySplit:5};ws["!autofilter"]={ref:`A5:K${rows.length+5}`};XLSX.utils.book_append_sheet(wb,ws,"Data SK");XLSX.writeFile(wb,`AutoKop_SK_${s}_${new Date().toISOString().slice(0,10)}.xlsx`);showToast("Excel berhasil dibuat.")}catch(e){showToast("Gagal membuat Excel: "+e.message)}finally{setLoading(false)}};
+$("downloadExcelBtn").onclick=async()=>{if(busy)return;const d=getDownloadData();if(!d.length){showToast("Tidak ada data.");return}setLoading(true,"Membuat file Excel…",`Menyiapkan ${d.length} data SK.`);try{if(typeof XLSX==="undefined")throw Error("Library Excel belum siap");const s=$("downloadScope").value,label=s==="DPW"?"DATA DPW":s==="DPD"?"DATA DPD":"SEMUA DATA DPD & DPW";const wb=XLSX.utils.book_new(),rows=prepareExportRows(d),ws=XLSX.utils.json_to_sheet(rows,{origin:"A5"});XLSX.utils.sheet_add_aoa(ws,[["AUTOKOP SK — PARTAI SOLIDARITAS INDONESIA"],[label],["Data SK yang tersimpan pada Server"],["Tanggal Export:",new Date().toLocaleString("id-ID")] ],{origin:"A1"});ws["!cols"]=[{wch:6},{wch:32},{wch:14},{wch:10},{wch:14},{wch:15},{wch:15},{wch:25},{wch:24},{wch:28},{wch:20}];ws["!freeze"]={xSplit:0,ySplit:5};ws["!autofilter"]={ref:`A5:K${rows.length+5}`};XLSX.utils.book_append_sheet(wb,ws,"Data SK");XLSX.writeFile(wb,`AutoKop_SK_${s}_${new Date().toISOString().slice(0,10)}.xlsx`);showToast("Excel berhasil dibuat.")}catch(e){showToast("Gagal membuat Excel: "+e.message)}finally{setLoading(false)}};
 $("downloadPdfBtn").onclick=async()=>{if(busy)return;const d=getDownloadData();if(!d.length){showToast("Tidak ada data.");return}setLoading(true,"Membuat file PDF…",`Menyiapkan ${d.length} data SK.`);try{if(!window.jspdf)throw Error("Library PDF belum siap");const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"}),pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight(),s=$("downloadScope").value,label=s==="DPW"?"DATA DPW":s==="DPD"?"DATA DPD":"SEMUA DATA DPD & DPW";doc.setFont("helvetica","bold");doc.setFontSize(16);doc.text("AUTOKOP SK",14,15);doc.setFontSize(10);doc.text("PARTAI SOLIDARITAS INDONESIA",14,21);doc.setFontSize(11);doc.text(label,14,29);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.text("Tanggal Export: "+new Date().toLocaleString("id-ID"),pw-14,15,{align:"right"});doc.autoTable({startY:36,head:[["No","Nomor SK","Tanggal","Tingkat","Kategori","Kode","Wilayah / Provinsi","Kabupaten / Kota","Dibuat Oleh"]],body:d.map((x,i)=>[i+1,x.nomor||"",x.tanggal||"",x.tingkat||"",x.kategori||"",x.kodeSurat||"",getWilayahName(x.wilayah),getKabupatenName(x.wilayah,x.kabupaten),x.user||""]),theme:"grid",styles:{fontSize:7,cellPadding:2,overflow:"linebreak"},headStyles:{fontStyle:"bold",fontSize:7},margin:{left:14,right:14,bottom:15},didDrawPage:()=>{doc.setFontSize(7);doc.text("AutoKop SK PSI · Data Administrasi",14,ph-7);doc.text("Halaman "+doc.internal.getNumberOfPages(),pw-14,ph-7,{align:"right"})}});doc.save(`AutoKop_SK_${s}_${new Date().toISOString().slice(0,10)}.pdf`);showToast("PDF data berhasil dibuat.")}catch(e){showToast("Gagal membuat PDF: "+e.message)}finally{setLoading(false)}};
 
 const pdfFields=["pdfDate","pdfRecipient","pdfNomor","pdfLampiran","pdfPerihal","pdfSalam","pdfBody1","pdfBody2","pdfBody3","pdfBody4","pdfSlogan1","pdfSlogan2","pdfKetua","pdfJabatanKetua","pdfSekretaris","pdfJabatanSekretaris","pdfTembusan","pdfInstagram","pdfFacebook","pdfEmail","pdfWhatsapp"];
