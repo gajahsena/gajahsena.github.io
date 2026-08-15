@@ -59,6 +59,30 @@ body{min-height:100vh}button,input,select,textarea{font:inherit}button{border:0;
 @media(max-width:1050px){.search-layout{grid-template-columns:1fr}.search-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.search-keyword{grid-column:1/-1}.tips-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:800px){.app{padding:14px 16px 0}.topbar{margin:0 -16px 30px;padding:0 16px}.main-card{padding:20px 15px;border-radius:23px}.row,.modal-grid{grid-template-columns:1fr}.modal-grid .full{grid-column:auto}.download-filter{grid-template-columns:1fr}.download-count{justify-content:center}.download-buttons{grid-template-columns:1fr}.search-fields{grid-template-columns:1fr}.search-keyword{grid-column:auto}.tabs{flex-wrap:wrap}.tab{flex:1 0 calc(50% - 4px);font-size:10px}.hero h1{font-size:clamp(30px,8vw,44px)}.tips-section{margin:0 -16px}.tips-inner{padding:0 16px}}
 @media(max-width:500px){.tips-grid{grid-template-columns:1fr}.hero-extra{gap:6px}}
+
+/* ===== PREMIUM MOTION UI — visual only, no functional changes ===== */
+html{scroll-behavior:smooth}body{overflow-x:hidden;position:relative}
+body:before,body:after{content:"";position:fixed;z-index:-1;width:34vw;height:34vw;min-width:260px;min-height:260px;border-radius:50%;filter:blur(70px);opacity:.16;pointer-events:none;animation:orbFloat 12s ease-in-out infinite alternate}
+body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bottom:4vh;background:#2876ff;animation-delay:-5s}
+.app{position:relative;animation:pageIn .8s cubic-bezier(.2,.8,.2,1) both}
+.topbar{backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 72%,transparent);position:sticky;top:0;z-index:100;transition:.3s;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+.logo{filter:drop-shadow(0 8px 18px rgba(237,28,36,.18));transition:.35s}.logo:hover{transform:scale(1.04)}
+.hero{animation:fadeUp .8s .08s both}.hero h1{background:linear-gradient(100deg,var(--text) 20%,var(--red2) 52%,var(--text) 82%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:titleShine 7s linear infinite}
+.hero-badge,.chip,.time-pill{transition:.3s}.hero-badge:hover,.chip:hover,.time-pill:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--red2) 55%,var(--line));box-shadow:0 10px 30px rgba(237,28,36,.10)}
+.main-card{position:relative;overflow:hidden;animation:fadeUp .8s .16s both}.main-card:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.035) 50%,transparent 80%);transform:translateX(-120%);animation:cardSweep 8s ease-in-out infinite;pointer-events:none}
+.form-card,.search-filter-card,.report-card,.download-intro,.download-preview{transition:transform .35s,box-shadow .35s,border-color .35s}.form-card:hover{border-color:color-mix(in srgb,var(--red2) 28%,var(--line));box-shadow:0 18px 50px rgba(0,0,0,.08)}
+.tab{position:relative;overflow:hidden}.tab:after{content:"";position:absolute;left:18%;right:18%;bottom:3px;height:2px;border-radius:10px;background:var(--red2);transform:scaleX(0);transition:.3s}.tab.active:after{transform:scaleX(1)}
+.btn,.download-btn,.mini-btn,.icon-btn,.report-wa{position:relative;overflow:hidden}.btn:before,.download-btn:before,.report-wa:before{content:"";position:absolute;top:-80%;left:-35%;width:30%;height:260%;background:rgba(255,255,255,.16);transform:rotate(22deg);transition:.6s}.btn:hover:before,.download-btn:hover:before,.report-wa:hover:before{left:115%}
+.btn:hover:not(:disabled){box-shadow:0 12px 30px rgba(237,28,36,.22)}.report-wa:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(22,139,76,.22)}
+.field input,.field select,.field textarea{transition:border-color .25s,box-shadow .25s,transform .25s}.field input:focus,.field select:focus,.field textarea:focus{transform:translateY(-1px)}
+.result-box{animation:successPop .45s cubic-bezier(.2,.9,.3,1) both}.tips-section{animation:fadeUp .8s .28s both}.tip-item{transition:.3s}.tip-item:hover{transform:translateY(-4px)}.tip-item:hover .tip-icon{color:var(--red2);border-color:rgba(237,28,36,.35);box-shadow:0 8px 22px rgba(237,28,36,.10)}
+.table-wrap{scrollbar-width:thin}.table-wrap tbody tr{transition:background .25s,transform .25s}.table-wrap tbody tr:hover{background:color-mix(in srgb,var(--red) 5%,transparent)}
+.loading-overlay{animation:overlayIn .25s both}.loader-card{animation:modalPop .45s cubic-bezier(.2,.9,.3,1) both}.spinner{box-shadow:0 0 30px rgba(237,28,36,.18)}.toast.show{animation:toastIn .35s cubic-bezier(.2,.9,.3,1)}.modal:not(.hidden){animation:overlayIn .25s both}.modal:not(.hidden) .modal-card{animation:modalPop .4s cubic-bezier(.2,.9,.3,1) both}
+.login-help b{color:var(--red2)}.login-wa{margin-top:11px;display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid rgba(37,211,102,.25);border-radius:12px;background:rgba(37,211,102,.08);color:var(--text);text-decoration:none;font-size:10px;font-weight:800;transition:.3s}.login-wa i:first-child{color:#25d366;font-size:14px}.login-wa i:last-child{color:var(--muted);font-size:9px}.login-wa:hover{transform:translateY(-2px);border-color:rgba(37,211,102,.5);box-shadow:0 10px 28px rgba(37,211,102,.12)}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}@keyframes titleShine{to{background-position:220% center}}@keyframes orbFloat{to{transform:translate(5vw,-4vh) scale(1.12)}}@keyframes cardSweep{0%,55%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}@keyframes successPop{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}@keyframes overlayIn{from{opacity:0}to{opacity:1}}@keyframes modalPop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}@keyframes toastIn{from{opacity:0;transform:translate(-50%,14px) scale(.96)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+@media(max-width:800px){.topbar{height:58px}.logo{height:34px}.hero{margin-bottom:20px}.hero h1{letter-spacing:-1.8px}.hero-sub{font-size:12px}.main-card{box-shadow:0 20px 55px rgba(0,0,0,.18)}.form-card{padding:17px 14px}.section-title{margin-bottom:16px}.section-title .num{width:34px;height:34px;border-radius:11px}.btn{width:100%;min-height:46px}.actions .btn{flex:1}.search-action-row .btn{width:auto}.login-wa{max-width:100%;font-size:9px}.login-wa span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tips-grid{gap:15px}}
+@media(max-width:500px){body:before,body:after{width:55vw;height:55vw;filter:blur(55px);opacity:.11}.app{padding-top:8px}.topbar{margin-bottom:22px}.top-actions .chip{font-size:7px}.icon-btn{width:37px;height:37px}.hero h1{font-size:clamp(28px,9.5vw,40px)}.hero h1 span{font-size:.72em;line-height:1.05;display:inline-block}.hero-extra{display:grid;grid-template-columns:1fr 1fr}.hero-badge{justify-content:center;padding:7px 8px}.hero-badge:first-child{grid-column:1/-1}.tabs{position:sticky;top:66px;z-index:90;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--panel3) 86%,transparent)}.tab{min-height:42px}.tab i{font-size:11px}.tab-content{animation:fadeUp .35s both}.result-line{align-items:stretch}.pre{min-width:100%;font-size:11px}.download-btn{min-height:88px}.report-wa{width:100%}.table-wrap{border-radius:13px}.login-wa{width:100%;justify-content:center}.modal{padding:8px}.modal-card{max-height:96vh;border-radius:18px}.modal-body{padding:13px}.modal-actions{flex-direction:column}.modal-actions .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -93,7 +117,7 @@ body{min-height:100vh}button,input,select,textarea{font:inherit}button{border:0;
 <section class="main-card">
 <div id="loginSection">
   <div class="card-head">
-    <div><div class="eyebrow">Login aplikasi</div><h2>Masuk ke AutoKop SK</h2><p>Gunakan akun yang ada pada sheet <b>users</b>.</p></div>
+    <div><div class="eyebrow">Login aplikasi</div><h2>Masuk ke AutoKop SK</h2><p class="login-help">Daftar akun silahkan hubungi admin <b>AnggaPutraJN</b>.</p><a class="login-wa" href="https://wa.me/6282286344446?text=Halo%20AnggaPutraJN,%20saya%20ingin%20mendaftar%20akun%20AutoKop%20SK." target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i><span>WhatsApp Admin · 082286344446</span><i class="fas fa-arrow-up-right-from-square"></i></a></div>
     <div class="time-pill"><i class="fas fa-shield-alt"></i> Login aman & anti spam</div>
   </div>
   <div class="form-card">
@@ -191,7 +215,7 @@ body{min-height:100vh}button,input,select,textarea{font:inherit}button{border:0;
 <div class="tip-item"><div class="tip-icon"><i class="fas fa-file-signature"></i></div><div><strong>Edit isi surat</strong><small>Setiap SK dapat diedit sebelum dibuat menjadi PDF.</small></div></div>
 <div class="tip-item"><div class="tip-icon"><i class="fas fa-moon"></i></div><div><strong>Dark / Light</strong><small>Tema tersimpan otomatis di browser.</small></div></div>
 </div>
-<div class="tips-footer"><i class="fas fa-shield-alt"></i> AutoKop SK PSI v3 · JSONP + retry + cache lokal untuk mengurangi error koneksi.</div>
+<div class="tips-footer"><i class="fas fa-shield-alt"></i> AutoKop SK PSI v3 · AnggaPutraJN</div>
 </div>
 </section>
 </div>
@@ -327,7 +351,7 @@ async function loadData(showError=true){
 
 async function login(username,password){
  if(busy)return;username=username.trim();if(!username||!password){showToast("Username dan password wajib diisi.");return}
- const result=await runRequest("Memverifikasi login…","Menghubungkan ke Google Sheets.",()=>apiCall("auth",{user:username,pass:password}));
+ const result=await runRequest("Memverifikasi login…","Menghubungkan ke server.",()=>apiCall("auth",{user:username,pass:password}));
  if(result.status==="ok"){
    currentUser=username;sessionStorage.setItem("autokop_user",username);
    $("loginSection").classList.add("hidden");$("mainApp").classList.remove("hidden");$("welcomeText").textContent="Selamat datang, "+username+". Kelola nomor SK dari satu tempat.";
