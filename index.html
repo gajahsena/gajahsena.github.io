@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ed1c24">
+<meta name="application-name" content="AutoKop SK PSI">
+<meta name="apple-mobile-web-app-title" content="AutoKop SK PSI">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23ed1c24'/%3E%3Cpath d='M29 28h70v15H45v15h45v14H45v16h54v15H29z' fill='white'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23ed1c24'/%3E%3Cpath d='M29 28h70v15H45v15h45v14H45v16h54v15H29z' fill='white'/%3E%3C/svg%3E">
+<link id="pwaManifest" rel="manifest">
+
 <title>AutoKop SK · PSI - By AnggaPutraJN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,6 +92,10 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
 @media(max-width:800px){.topbar{height:58px}.logo{height:34px}.hero{margin-bottom:20px}.hero h1{letter-spacing:-1.8px}.hero-sub{font-size:12px}.main-card{box-shadow:0 20px 55px rgba(0,0,0,.18)}.form-card{padding:17px 14px}.section-title{margin-bottom:16px}.section-title .num{width:34px;height:34px;border-radius:11px}.btn{width:100%;min-height:46px}.actions .btn{flex:1}.search-action-row .btn{width:auto}.login-wa{max-width:100%;font-size:9px}.login-wa span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tips-grid{gap:15px}}
 @media(max-width:500px){body:before,body:after{width:55vw;height:55vw;filter:blur(55px);opacity:.11}.app{padding-top:8px}.topbar{margin-bottom:22px}.top-actions .chip{font-size:7px}.icon-btn{width:37px;height:37px}.hero h1{font-size:clamp(28px,9.5vw,40px)}.hero h1 span{font-size:.72em;line-height:1.05;display:inline-block}.hero-extra{display:grid;grid-template-columns:1fr 1fr}.hero-badge{justify-content:center;padding:7px 8px}.hero-badge:first-child{grid-column:1/-1}.tabs{position:sticky;top:66px;z-index:90;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--panel3) 86%,transparent)}.tab{min-height:42px}.tab i{font-size:11px}.tab-content{animation:fadeUp .35s both}.result-line{align-items:stretch}.pre{min-width:100%;font-size:11px}.download-btn{min-height:88px}.report-wa{width:100%}.table-wrap{border-radius:13px}.login-wa{width:100%;justify-content:center}.modal{padding:8px}.modal-card{max-height:96vh;border-radius:18px}.modal-body{padding:13px}.modal-actions{flex-direction:column}.modal-actions .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+.install-ready{animation:installPulse 1.8s ease-in-out infinite}
+@keyframes installPulse{0%,100%{box-shadow:0 0 0 0 rgba(237,28,36,.0)}50%{box-shadow:0 0 0 6px rgba(237,28,36,.10)}}
+.install-toast{display:flex!important}
 </style>
 </head>
 <body>
@@ -121,7 +134,7 @@ body:before{left:-12vw;top:10vh;background:var(--red)}body:after{right:-12vw;bot
     <div class="time-pill"><i class="fas fa-shield-alt"></i> Login aman & anti spam</div>
   </div>
   <div class="form-card">
-    <div class="section-title"><div class="num">01</div><div><strong>Autentikasi</strong><small>Masukkan akun untuk membuka sistem.</small></div></div>
+    <div class="section-title"><div class="num">01</div><div><strong>Login</strong><small>Masukkan akun untuk membuka sistem.</small></div></div>
     <div class="row">
       <div class="field"><label>Username</label><input id="usernameInput" type="text" autocomplete="username" placeholder="Masukkan username"></div>
       <div class="field"><label>Password</label><input id="passwordInput" type="password" autocomplete="current-password" placeholder="Masukkan password"></div>
@@ -530,6 +543,79 @@ function applyTheme(theme){document.documentElement.setAttribute("data-theme",th
 applyTheme(localStorage.getItem(THEME_KEY)||"dark");$("themeBtn").onclick=()=>applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
 updateDownloadInfo();
 console.log("AutoKop SK PSI v3 siap.");
+
+
+/* ===== PWA / DESKTOP INSTALL — tidak mengubah fungsi aplikasi utama ===== */
+(function(){
+  const installBtn=$("installBtn");
+  let deferredPrompt=null;
+
+  const iconSvg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <rect width="128" height="128" rx="28" fill="#ed1c24"/>
+    <path d="M29 28h70v15H45v15h45v14H45v16h54v15H29z" fill="#fff"/>
+  </svg>`;
+
+  const manifest={
+    name:"AutoKop SK PSI",
+    short_name:"AutoKop SK",
+    description:"AutoKop SK Partai Solidaritas Indonesia - DIREKTORAT GAJAH SENA",
+    start_url:location.href.split("#")[0],
+    scope:location.href.substring(0,location.href.lastIndexOf("/")+1),
+    display:"standalone",
+    orientation:"any",
+    background_color:"#08090c",
+    theme_color:"#ed1c24",
+    icons:[
+      {src:"data:image/svg+xml,"+encodeURIComponent(iconSvg),sizes:"128x128",type:"image/svg+xml",purpose:"any maskable"}
+    ]
+  };
+
+  try{
+    const manifestBlob=new Blob([JSON.stringify(manifest)],{type:"application/manifest+json"});
+    const manifestUrl=URL.createObjectURL(manifestBlob);
+    $("pwaManifest").href=manifestUrl;
+  }catch(e){}
+
+  function showInstallButton(){
+    if(!installBtn)return;
+    installBtn.classList.remove("hidden");
+    installBtn.classList.add("install-ready");
+  }
+  function hideInstallButton(){
+    if(!installBtn)return;
+    installBtn.classList.add("hidden");
+    installBtn.classList.remove("install-ready");
+  }
+
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault();
+    deferredPrompt=e;
+    showInstallButton();
+  });
+
+  installBtn?.addEventListener("click",async()=>{
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const result=await deferredPrompt.userChoice;
+      if(result.outcome==="accepted")showToast("AutoKop SK berhasil ditambahkan ke desktop.");
+      deferredPrompt=null;
+      hideInstallButton();
+      return;
+    }
+    showToast("Jika tombol instalasi belum muncul, buka menu browser lalu pilih Install / Tambahkan ke desktop.");
+  });
+
+  window.addEventListener("appinstalled",()=>{
+    deferredPrompt=null;
+    hideInstallButton();
+    showToast("AutoKop SK berhasil diinstal.");
+  });
+
+  // Browser desktop yang menyediakan mode install tanpa event tetap diberi petunjuk.
+  setTimeout(()=>{
+    if(!deferredPrompt && window.matchMedia("(display-mode: standalone)").matches) hideInstallButton();
+  },1000);
+})();
 
 window.addEventListener("load",()=>{
  const saved=sessionStorage.getItem("autokop_user");
