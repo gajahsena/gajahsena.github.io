@@ -1,5 +1,5 @@
 const CACHE_NAME = 'autokop-sk-v1';
-const APP_SHELL = ['', 'index.html', 'manifest.json'];
+const APP_SHELL = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
